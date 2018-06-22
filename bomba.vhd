@@ -10,8 +10,11 @@ ENTITY bomba IS
 		clock: IN STD_LOGIC;
 		control: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 		
-		display_minutos: OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
-		display_horas: OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
+		display0,
+		display1,
+		display2,
+		display3: OUT STD_LOGIC_VECTOR(6 downto 0);
+		
 		contagem_segundos, contagem_minutos: OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
 		cout: OUT STD_LOGIC
 	);
@@ -20,7 +23,7 @@ END bomba;
 ARCHITECTURE behavior OF bomba IS
 
 SIGNAL clock_segundos, clock_minutos, qwer: STD_LOGIC;
-SIGNAL segundos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
+SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
 
 COMPONENT signal_generator
 	PORT(
@@ -35,6 +38,15 @@ COMPONENT regressive_counter
 		clock: IN STD_LOGIC;
 		
 		q: OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
+	);
+END COMPONENT;
+
+COMPONENT display
+	PORT (
+		entrada: IN STD_LOGIC_VECTOR(5 downto 0);
+
+		display_unidade,
+		display_dezena: OUT STD_LOGIC_VECTOR(6 downto 0)
 	);
 END COMPONENT;
 
@@ -54,6 +66,12 @@ BEGIN
 
 	minutos: regressive_counter 
 		PORT MAP (clock => clock_minutos, q => contagem_minutos); 
+		
+	display_segundos: display
+		PORT MAP (entrada => segundos_buffer, display_unidade => display0, display_dezena => display1);
+	display_minutos: display
+		PORT MAP (entrada => minutos_buffer, display_unidade => display2, display_dezena => display3);
 
-  contagem_segundos <= segundos_buffer; 
+  contagem_segundos <= segundos_buffer;
+  contagem_minutos <= minutos_buffer;
 END behavior;
