@@ -61,9 +61,9 @@ set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
 set_global_assignment -name VHDL_FILE signal_generator.vhd
 set_global_assignment -name VHDL_FILE half_second_tick.vhd
 set_global_assignment -name VHDL_FILE quarter_second_tick.vhd
-set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "C:/Users/joaofnds/Desktop/bomba/Waveform.vwf"
 set_global_assignment -name VHDL_FILE display.vhd
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "C:/Users/joaofnds/Desktop/bomba/Waveform.vwf"

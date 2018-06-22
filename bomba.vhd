@@ -9,6 +9,7 @@ ENTITY bomba IS
 		codigo_desarme: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 		clock: IN STD_LOGIC;
 		control: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+		reset: IN STD_LOGIC;
 		
 		display0,
 		display1,
@@ -36,6 +37,7 @@ END COMPONENT;
 COMPONENT regressive_counter
 	PORT (
 		clock: IN STD_LOGIC;
+		reset: IN STD_LOGIC;
 		
 		q: OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
 	);
@@ -55,7 +57,7 @@ BEGIN
 		PORT MAP (clock => clock, controle => control, q => clock_segundos);
 
 	segundos: regressive_counter 
-		PORT MAP (clock => clock_segundos, q => segundos_buffer); 
+		PORT MAP (clock => clock, reset => reset, q => segundos_buffer); 
    
 	clock_minutos <= segundos_buffer(5) AND 
 						  segundos_buffer(4) AND 
@@ -65,7 +67,7 @@ BEGIN
 						  segundos_buffer(0); 
 
 	minutos: regressive_counter 
-		PORT MAP (clock => clock_minutos, q => contagem_minutos); 
+		PORT MAP (clock => clock_minutos, reset => reset, q => minutos_buffer);
 		
 	display_segundos: display
 		PORT MAP (entrada => segundos_buffer, display_unidade => display0, display_dezena => display1);
