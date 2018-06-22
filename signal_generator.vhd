@@ -11,33 +11,42 @@ END signal_generator;
 
 ARCHITECTURE behavior OF signal_generator IS
 
-constant COUNT_TO_ONE_SEC: integer := 50000000;
-constant COUNT_TO_HALF_SEC: integer := 25000000;
-constant COUNT_TO_QUARTER_SEC: integer := 125000000;
-
 SIGNAL clock_minutos, tick_one_sec, tick_half_sec, tick_quarter_sec: STD_LOGIC;
 
-COMPONENT divider
+COMPONENT one_second_tick
 	PORT (
-		count_to: IN INTEGER;
+		clock: IN STD_LOGIC;
+		q: OUT STD_LOGIC
+	);
+END COMPONENT;
+
+COMPONENT half_second_tick
+	PORT (
+		clock: IN STD_LOGIC;
+		q: OUT STD_LOGIC
+	);
+END COMPONENT;
+
+COMPONENT quarter_second_tick
+	PORT (
 		clock: IN STD_LOGIC;
 		q: OUT STD_LOGIC
 	);
 END COMPONENT;
 	
 BEGIN
-	one_sec_tick: divider
-		PORT MAP (count_to => COUNT_TO_ONE_SEC, clock => clock, q => tick_one_sec);
-	half_sec_tick: divider
-		PORT MAP (count_to => COUNT_TO_HALF_SEC, clock => clock, q => tick_half_sec);
-	quarter_sec_tick: divider
-		PORT MAP (count_to => COUNT_TO_QUARTER_SEC, clock => clock, q => tick_quarter_sec);
+	one_sec_tick: one_second_tick
+		PORT MAP (clock => clock, q => tick_one_sec);
+	half_sec_tick: half_second_tick
+		PORT MAP (clock => clock, q => tick_half_sec);
+	quarter_sec_tick: quarter_second_tick
+		PORT MAP (clock => clock, q => tick_quarter_sec);
 		
 		
 	WITH controle SELECT
 		q <=
-			'0' WHEN "00",
-			tick_one_sec WHEN "01",
-			tick_half_sec WHEN "10",
+			'0'              WHEN "00",
+			tick_one_sec     WHEN "01",
+			tick_half_sec    WHEN "10",
 			tick_quarter_sec WHEN "11";
 END behavior;
