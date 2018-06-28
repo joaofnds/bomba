@@ -34,10 +34,13 @@ CONSTANT sev_seg_dash: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0111111";
 CONSTANT sev_seg_d: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0100001";
 CONSTANT sev_seg_e: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0000110";
 CONSTANT sev_seg_n: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0111010";
-CONSTANT sev_seg_i: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1111001";
+CONSTANT sev_seg_i: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1011110";
 CONSTANT sev_seg_f: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0001110";
 CONSTANT sev_seg_u: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1010000";
 CONSTANT sev_seg_s: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0100100";
+
+CONSTANT defuse_code: INTEGER := 62;
+CONSTANT denied_code: INTEGER := 63;
 
 SIGNAL display_0_buffer,
 		   display_1_buffer,
@@ -47,89 +50,108 @@ SIGNAL display_0_buffer,
 		   display_5_buffer: STD_LOGIC_VECTOR (6 DOWNTO 0);
 
 BEGIN
-	WITH (entrada mod 10) SELECT
-		display_0_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
-			
-	WITH ((entrada/10) mod 10) SELECT
-		display_1_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
-			
-	WITH ((entrada/100) mod 10) SELECT
-		display_2_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
-			
-	WITH ((entrada/1000) mod 10) SELECT
-		display_3_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
+	PROCESS(entrada)
+	BEGIN
+		IF entrada=defuse_code THEN
+			display_0_buffer <= sev_seg_d;
+			display_1_buffer <= sev_seg_e;
+			display_2_buffer <= sev_seg_f;
+			display_3_buffer <= sev_seg_u;
+			display_4_buffer <= sev_seg_s;
+			display_5_buffer <= sev_seg_e;
+		ELSIF entrada=denied_code THEN
+			display_0_buffer <= sev_seg_d;
+			display_1_buffer <= sev_seg_e;
+			display_2_buffer <= sev_seg_n;
+			display_3_buffer <= sev_seg_i;
+			display_4_buffer <= sev_seg_e;
+			display_5_buffer <= sev_seg_d;
+		ELSE
+			CASE (entrada mod 10) IS
+				WHEN 0 => display_0_buffer <= sev_seg_0;
+				WHEN 1 => display_0_buffer <= sev_seg_1;
+				WHEN 2 => display_0_buffer <= sev_seg_2;
+				WHEN 3 => display_0_buffer <= sev_seg_3;
+				WHEN 4 => display_0_buffer <= sev_seg_4;
+				WHEN 5 => display_0_buffer <= sev_seg_5;
+				WHEN 6 => display_0_buffer <= sev_seg_6;
+				WHEN 7 => display_0_buffer <= sev_seg_7;
+				WHEN 8 => display_0_buffer <= sev_seg_8;
+				WHEN 9 => display_0_buffer <= sev_seg_9;
+				WHEN OTHERS => display_0_buffer <= sev_seg_dash;
+			END CASE;
+					
+			CASE ((entrada/10) mod 10) IS
+				WHEN 0 => display_1_buffer <= sev_seg_0;
+				WHEN 1 => display_1_buffer <= sev_seg_1;
+				WHEN 2 => display_1_buffer <= sev_seg_2;
+				WHEN 3 => display_1_buffer <= sev_seg_3;
+				WHEN 4 => display_1_buffer <= sev_seg_4;
+				WHEN 5 => display_1_buffer <= sev_seg_5;
+				WHEN 6 => display_1_buffer <= sev_seg_6;
+				WHEN 7 => display_1_buffer <= sev_seg_7;
+				WHEN 8 => display_1_buffer <= sev_seg_8;
+				WHEN 9 => display_1_buffer <= sev_seg_9;
+				WHEN OTHERS => display_1_buffer <= sev_seg_dash;
+			END CASE;
+					
+			CASE ((entrada/100) mod 10) IS
+				WHEN 0 => display_2_buffer <= sev_seg_0;
+				WHEN 1 => display_2_buffer <= sev_seg_1;
+				WHEN 2 => display_2_buffer <= sev_seg_2;
+				WHEN 3 => display_2_buffer <= sev_seg_3;
+				WHEN 4 => display_2_buffer <= sev_seg_4;
+				WHEN 5 => display_2_buffer <= sev_seg_5;
+				WHEN 6 => display_2_buffer <= sev_seg_6;
+				WHEN 7 => display_2_buffer <= sev_seg_7;
+				WHEN 8 => display_2_buffer <= sev_seg_8;
+				WHEN 9 => display_2_buffer <= sev_seg_9;
+				WHEN OTHERS => display_2_buffer <= sev_seg_dash;
+			END CASE;
+					
+			CASE ((entrada/1000) mod 10) IS
+				WHEN 0 => display_3_buffer <= sev_seg_0;
+				WHEN 1 => display_3_buffer <= sev_seg_1;
+				WHEN 2 => display_3_buffer <= sev_seg_2;
+				WHEN 3 => display_3_buffer <= sev_seg_3;
+				WHEN 4 => display_3_buffer <= sev_seg_4;
+				WHEN 5 => display_3_buffer <= sev_seg_5;
+				WHEN 6 => display_3_buffer <= sev_seg_6;
+				WHEN 7 => display_3_buffer <= sev_seg_7;
+				WHEN 8 => display_3_buffer <= sev_seg_8;
+				WHEN 9 => display_3_buffer <= sev_seg_9;
+				WHEN OTHERS => display_3_buffer <= sev_seg_dash;
+			END CASE;
 
-	WITH ((entrada/10000) mod 10) SELECT
-		display_4_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
+			CASE ((entrada/10000) mod 10) IS
+				WHEN 0 => display_4_buffer <= sev_seg_0;
+				WHEN 1 => display_4_buffer <= sev_seg_1;
+				WHEN 2 => display_4_buffer <= sev_seg_2;
+				WHEN 3 => display_4_buffer <= sev_seg_3;
+				WHEN 4 => display_4_buffer <= sev_seg_4;
+				WHEN 5 => display_4_buffer <= sev_seg_5;
+				WHEN 6 => display_4_buffer <= sev_seg_6;
+				WHEN 7 => display_4_buffer <= sev_seg_7;
+				WHEN 8 => display_4_buffer <= sev_seg_8;
+				WHEN 9 => display_4_buffer <= sev_seg_9;
+				WHEN OTHERS => display_4_buffer <= sev_seg_dash;
+			END CASE;
 
-	WITH ((entrada/100000) mod 10) SELECT
-		display_5_buffer <=
-			sev_seg_0 WHEN 0,
-			sev_seg_1 WHEN 1,
-			sev_seg_2 WHEN 2,
-			sev_seg_3 WHEN 3,
-			sev_seg_4 WHEN 4,
-			sev_seg_5 WHEN 5,
-			sev_seg_6 WHEN 6,
-			sev_seg_7 WHEN 7,
-			sev_seg_8 WHEN 8,
-			sev_seg_9 WHEN 9,
-			sev_seg_dash WHEN OTHERS;
+			CASE ((entrada/100000) mod 10) IS
+				WHEN 0 => display_5_buffer <= sev_seg_0;
+				WHEN 1 => display_5_buffer <= sev_seg_1;
+				WHEN 2 => display_5_buffer <= sev_seg_2;
+				WHEN 3 => display_5_buffer <= sev_seg_3;
+				WHEN 4 => display_5_buffer <= sev_seg_4;
+				WHEN 5 => display_5_buffer <= sev_seg_5;
+				WHEN 6 => display_5_buffer <= sev_seg_6;
+				WHEN 7 => display_5_buffer <= sev_seg_7;
+				WHEN 8 => display_5_buffer <= sev_seg_8;
+				WHEN 9 => display_5_buffer <= sev_seg_9;
+				WHEN OTHERS => display_5_buffer <= sev_seg_dash;
+			END CASE;
+		END IF;
+	END PROCESS;
 
 	display_0 <= display_0_buffer;
 	display_1 <= display_1_buffer;
