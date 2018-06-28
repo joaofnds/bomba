@@ -6,7 +6,7 @@ ENTITY bomba IS
 	PORT(
 		fios: IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 		codigo: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-		contagem_ativa: IN STD_LOGIC;
+		ativa_contagem: IN STD_LOGIC;
 		codigo_desarme: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 		clock: IN STD_LOGIC;
 		control: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -15,7 +15,9 @@ ENTITY bomba IS
 		display0,
 		display1,
 		display2,
-		display3: OUT STD_LOGIC_VECTOR(6 downto 0);
+		display3,
+		display4,
+		display5: OUT STD_LOGIC_VECTOR(6 downto 0);
 		
 		contagem_segundos, contagem_minutos: OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
 		cout: OUT STD_LOGIC
@@ -24,7 +26,7 @@ END bomba;
 
 ARCHITECTURE behavior OF bomba IS
 
-SIGNAL clock_segundos, clock_minutos, qwer: STD_LOGIC;
+SIGNAL clock_segundos, clock_minutos, contagem_ativa: STD_LOGIC;
 SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
 SIGNAL segundos, minutos, entrada: INTEGER;
 
@@ -49,10 +51,12 @@ COMPONENT display
 	PORT (
 		entrada: IN INTEGER RANGE 0 TO 999999;
 
-		display_unidade,
-		display_dezena,
-		display_centena,
-		display_milhar: OUT STD_LOGIC_VECTOR(6 downto 0)
+		display_0,
+		display_1,
+		display_2,
+		display_3,
+		display_4,
+		display_5: OUT STD_LOGIC_VECTOR(6 downto 0)
 	);
 END COMPONENT;
 
@@ -80,10 +84,12 @@ BEGIN
 	display_segundos: display
 		PORT MAP (
 			entrada => entrada,
-			display_unidade => display0,
-			display_dezena => display1,
-			display_centena => display2,
-			display_milhar => display3
+			display_0 => display0,
+			display_1 => display1,
+			display_2 => display2,
+			display_3 => display3,
+			display_4 => display4,
+			display_5 => display5
 		);
 
   contagem_segundos <= segundos_buffer;
