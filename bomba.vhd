@@ -1,5 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.all;
 
 ENTITY bomba IS
 	PORT(
@@ -25,6 +26,7 @@ ARCHITECTURE behavior OF bomba IS
 
 SIGNAL clock_segundos, clock_minutos, qwer: STD_LOGIC;
 SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
+SIGNAL segundos, minutos, entrada: INTEGER;
 
 COMPONENT signal_generator
 	PORT(
@@ -45,10 +47,12 @@ END COMPONENT;
 
 COMPONENT display
 	PORT (
-		entrada: IN STD_LOGIC_VECTOR(5 downto 0);
+		entrada: IN INTEGER RANGE 0 TO 999999;
 
 		display_unidade,
-		display_dezena: OUT STD_LOGIC_VECTOR(6 downto 0)
+		display_dezena,
+		display_centena,
+		display_milhar: OUT STD_LOGIC_VECTOR(6 downto 0)
 	);
 END COMPONENT;
 
@@ -56,8 +60,8 @@ BEGIN
 	gerador_de_sinal: signal_generator
 		PORT MAP (clock => clock, controle => control, q => clock_segundos);
 
-	segundos: regressive_counter 
-		PORT MAP (clock => clock, reset => reset, q => segundos_buffer); 
+	segundos_counter: regressive_counter 
+		PORT MAP (clock => (clock_segundos AND contagem_ativa), reset => reset, q => segundos_buffer); 
    
 	clock_minutos <= segundos_buffer(5) AND 
 						  segundos_buffer(4) AND 
@@ -66,13 +70,21 @@ BEGIN
                     segundos_buffer(1) AND 
 						  segundos_buffer(0); 
 
-	minutos: regressive_counter 
+	minutos_counter: regressive_counter 
 		PORT MAP (clock => clock_minutos, reset => reset, q => minutos_buffer);
 		
+	segundos <= to_integer(unsigned(segundos_buffer));
+	minutos <=  to_integer(unsigned(minutos_buffer));
+	entrada <= (minutos * 100) + segundos;
+		
 	display_segundos: display
-		PORT MAP (entrada => segundos_buffer, display_unidade => display0, display_dezena => display1);
-	display_minutos: display
-		PORT MAP (entrada => minutos_buffer, display_unidade => display2, display_dezena => display3);
+		PORT MAP (
+			entrada => entrada,
+			display_unidade => display0,
+			display_dezena => display1,
+			display_centena => display2,
+			display_milhar => display3
+		);
 
   contagem_segundos <= segundos_buffer;
   contagem_minutos <= minutos_buffer;
