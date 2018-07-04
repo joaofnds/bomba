@@ -10,7 +10,7 @@ ENTITY one_second_tick IS
 END one_second_tick;
 
 ARCHITECTURE behavior OF one_second_tick IS
-constant ONE_SECOND_COUNT: INTEGER := 50000000;
+constant ONE_SECOND_COUNT: INTEGER := 25000000;
 SIGNAL count: INTEGER RANGE 0 TO ONE_SECOND_COUNT := 0;
 SIGNAL q_temp: STD_LOGIC := '0';
 BEGIN
