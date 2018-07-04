@@ -12,7 +12,7 @@ END integer_register;
 
 ARCHITECTURE behavior OF integer_register is
 BEGIN
-	PROCESS(load)
+	PROCESS(d, load)
 	BEGIN
 		IF load='1' THEN
 			q <= d;
