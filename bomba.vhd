@@ -1,23 +1,22 @@
 LIBRARY IEEE;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.all;
+USE IEEE.STD_LOGIC_1164.all;
+USE IEEE.NUMERIC_STD.all;
 
 ENTITY bomba IS
 	PORT(
 		fios: IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-		codigo: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 		ativa_contagem: IN STD_LOGIC;
 		codigo_desarme: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-		clock: IN STD_LOGIC;
-		control: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-		reset: IN STD_LOGIC;
+		CLOCK_50: IN STD_LOGIC;
+		SW: IN STD_LOGIC_VECTOR(17 DOWNTO 0);
+		KEY: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 		
-		display0,
-		display1,
-		display2,
-		display3,
-		display4,
-		display5: OUT STD_LOGIC_VECTOR(6 downto 0);
+		HEX0,
+		HEX1,
+		HEX2,
+		HEX3,
+		HEX4,
+		HEX5: OUT STD_LOGIC_VECTOR(6 downto 0);
 		
 		contagem_segundos, contagem_minutos: OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
 		cout: OUT STD_LOGIC
@@ -41,7 +40,9 @@ END COMPONENT;
 COMPONENT regressive_counter
 	PORT (
 		clock: IN STD_LOGIC;
+		load: IN STD_LOGIC;
 		reset: IN STD_LOGIC;
+		preset: IN INTEGER;
 		
 		q: OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
 	);
