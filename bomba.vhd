@@ -61,6 +61,32 @@ COMPONENT display
 	);
 END COMPONENT;
 
+COMPONENT display_mux
+	PORT (
+		data_0, data_1: IN INTEGER;
+		sel: IN STD_LOGIC;
+		
+		q: OUT INTEGER
+	);
+END COMPONENT;
+
+COMPONENT integer_register
+	PORT (
+		d: IN INTEGER;
+		load: IN STD_LOGIC;
+		
+		q: OUT INTEGER
+	);
+END COMPONENT;
+
+COMPONENT countdown_setter
+		PORT (
+			keys: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+			
+			q_seg, q_min: OUT INTEGER
+		);
+END COMPONENT;
+
 BEGIN
 	gerador_de_sinal: signal_generator
 		PORT MAP (clock => clock, controle => control, q => clock_segundos);
