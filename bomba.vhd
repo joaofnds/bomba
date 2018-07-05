@@ -109,7 +109,9 @@ BEGIN
 	
 	PROCESS(CLOCK_50)
 	BEGIN
-		IF rising_edge(CLOCK_50) THEN
+		IF SW(1)='1' THEN
+			current_state <= set_code;
+		ELSIF rising_edge(CLOCK_50) THEN
 			current_state <= next_state;
 		END IF;
 	END PROCESS;
@@ -117,48 +119,47 @@ BEGIN
 	PROCESS(current_state, fsm_must_transition)
 		VARIABLE initial_state: STD_LOGIC := '1';
 	BEGIN
-		IF initial_state='1' THEN
-			next_state <= set_code;
-			initial_state := '0';
-		END IF;
-		
 		CASE current_state IS
 			WHEN set_code =>
+				LEDR(15) <= '0';
+				LEDR(16) <= '0';
+				LEDR(17) <= '1';
+				contagem_ativa <= '0';
+				display_mux_sel <= '1';
+				load_codigo <= '1';
+				load_countdown <= '0';
+				signal_generator_control <= "00";
+				
 				IF fsm_must_transition='1' THEN
 					next_state <= set_timer;
-					LEDR(17) <= '0';
 				ELSE
-					LEDR(17) <= '1';
-					contagem_ativa <= '0';
-					display_mux_sel <= '1';
-					load_codigo <= '1';
-					load_countdown <= '0';
-					signal_generator_control <= "00";
+					next_state <= set_code;
 				END IF;
 			WHEN set_timer =>
-				IF fsm_must_transition='1' THEN
+				LEDR(15) <= '0';
+				LEDR(16) <= '1';
+				LEDR(17) <= '0';
+				contagem_ativa <= '0';
+				display_mux_sel <= '0';
+				load_codigo <= '0';
+				load_countdown <= '1';
+				signal_generator_control <= "00";
+				
+				IF fsm_must_transition='0' THEN
 					next_state <= countdown;
-					LEDR(16) <= '0';
 				ELSE
-					LEDR(16) <= '1';
-					contagem_ativa <= '0';
-					display_mux_sel <= '0';
-					load_codigo <= '0';
-					load_countdown <= '1';
-					signal_generator_control <= "00";
+					next_state <= set_timer;
 				END IF;
 			WHEN countdown =>
-				IF fsm_must_transition='1' THEN
-					LEDR(15) <= '0';
-				ELSE
-					LEDR(15) <= '1';
-					contagem_ativa <= '1';
-					display_mux_sel <= '0';
-					load_codigo <= '0';
-					load_countdown <= '0';
-					signal_generator_control <= "01";
-				END IF;
-			WHEN OTHERS => current_state <= set_code;
+				LEDR(15) <= '1';
+				LEDR(16) <= '0';
+				LEDR(17) <= '0';
+				next_state <= countdown;
+				contagem_ativa <= '1';
+				display_mux_sel <= '0';
+				load_codigo <= '0';
+				load_countdown <= '0';
+				signal_generator_control <= "01";
 		END CASE;
 	END PROCESS;
 
