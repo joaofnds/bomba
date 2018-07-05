@@ -120,10 +120,7 @@ BEGIN
 	BEGIN
 		CASE current_state IS
 			WHEN set_code =>
-				LEDR(14) <= '0';
-				LEDR(15) <= '0';
-				LEDR(16) <= '0';
-				LEDR(17) <= '1';
+				LEDR(17 DOWNTO 13) <= "10000";
 				display_mux_sel <= "001";
 				load_codigo <= '1';
 				load_countdown <= '0';
@@ -135,10 +132,7 @@ BEGIN
 					next_state <= set_code;
 				END IF;
 			WHEN set_timer =>
-				LEDR(14) <= '0';
-				LEDR(15) <= '0';
-				LEDR(16) <= '1';
-				LEDR(17) <= '0';
+				LEDR(17 DOWNTO 13) <= "01000";
 				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '1';
@@ -150,10 +144,7 @@ BEGIN
 					next_state <= set_timer;
 				END IF;
 			WHEN countdown =>
-				LEDR(14) <= '0';
-				LEDR(15) <= '1';
-				LEDR(16) <= '0';
-				LEDR(17) <= '0';
+				LEDR(17 DOWNTO 13) <= "00100";
 				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '0';
@@ -165,10 +156,7 @@ BEGIN
 					next_state <= countdown;
 				END IF;
 			WHEN boon =>
-				LEDR(14) <= '1';
-				LEDR(15) <= '0';
-				LEDR(16) <= '0';
-				LEDR(17) <= '0';
+				LEDR(17 DOWNTO 13) <= "00001";
 				display_mux_sel <= "100";
 				load_codigo <= '0';
 				load_countdown <= '0';
