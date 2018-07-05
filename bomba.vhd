@@ -30,12 +30,12 @@ TYPE STATES is (set_code, set_timer, countdown);
 SIGNAL current_state, next_state: STATES;
 SIGNAL clock_segundos,
 		 clock_minutos,
-		 display_mux_sel,
 		 load_codigo,
 		 load_countdown,
 		 fsm_must_transition,
 		 contagem_ativa: STD_LOGIC;
 SIGNAL signal_generator_control: STD_LOGIC_VECTOR(1 DOWNTO 0);
+SIGNAL display_mux_sel: STD_LOGIC_VECTOR(2 DOWNTO 0);
 SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
 SIGNAL segundos,
 		minutos,
@@ -80,8 +80,8 @@ END COMPONENT;
 
 COMPONENT display_mux
 	PORT (
-		data_0, data_1: IN INTEGER;
-		sel: IN STD_LOGIC;
+		data_0, data_1, data_2, data_3, data_4: IN INTEGER;
+		sel: IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 		
 		q: OUT INTEGER
 	);
@@ -125,7 +125,7 @@ BEGIN
 				LEDR(16) <= '0';
 				LEDR(17) <= '1';
 				contagem_ativa <= '0';
-				display_mux_sel <= '1';
+				display_mux_sel <= "001";
 				load_codigo <= '1';
 				load_countdown <= '0';
 				signal_generator_control <= "00";
@@ -140,7 +140,7 @@ BEGIN
 				LEDR(16) <= '1';
 				LEDR(17) <= '0';
 				contagem_ativa <= '0';
-				display_mux_sel <= '0';
+				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '1';
 				signal_generator_control <= "00";
@@ -156,7 +156,7 @@ BEGIN
 				LEDR(17) <= '0';
 				next_state <= countdown;
 				contagem_ativa <= '1';
-				display_mux_sel <= '0';
+				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '0';
 				signal_generator_control <= "01";
@@ -207,6 +207,9 @@ BEGIN
 		PORT MAP (
 			data_0 => entrada,
 			data_1 => codigo,
+			data_2 => 62, -- defuse code
+			data_3 => 63, -- denied code
+			data_4 => 64, -- boon code
 			sel => display_mux_sel,
 			q => display_buffer
 		);
