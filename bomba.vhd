@@ -26,7 +26,7 @@ END bomba;
 
 ARCHITECTURE behavior OF bomba IS
 
-TYPE STATES is (set_code, set_timer, countdown, boon);
+TYPE STATES is (set_code, set_timer, countdown, boon, defuse);
 SIGNAL current_state, next_state: STATES;
 SIGNAL clock_segundos,
 		 clock_minutos,
@@ -115,7 +115,7 @@ BEGIN
 		END IF;
 	END PROCESS;
 	
-	PROCESS(current_state, fsm_must_transition)
+	PROCESS(current_state, fsm_must_transition, KEY, codigo_in)
 		VARIABLE initial_state: STD_LOGIC := '1';
 	BEGIN
 		CASE current_state IS
@@ -155,6 +155,19 @@ BEGIN
 				ELSE
 					next_state <= countdown;
 				END IF;
+				
+				IF KEY(3)='0' THEN
+					IF codigo_in=codigo THEN
+						next_state <= defuse;
+					END IF;
+				END IF;
+			WHEN defuse =>
+				LEDR(17 DOWNTO 13) <= "00010";
+				display_mux_sel <= "010";
+				load_codigo <= '0';
+				load_countdown <= '0';
+				signal_generator_control <= "00";
+				next_state <= defuse;
 			WHEN boon =>
 				LEDR(17 DOWNTO 13) <= "00001";
 				display_mux_sel <= "100";
