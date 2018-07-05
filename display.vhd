@@ -30,17 +30,22 @@ CONSTANT sev_seg_7:    STD_LOGIC_VECTOR(6 DOWNTO 0) := "1111000";
 CONSTANT sev_seg_8:    STD_LOGIC_VECTOR(6 DOWNTO 0) := "0000000";
 CONSTANT sev_seg_9:    STD_LOGIC_VECTOR(6 DOWNTO 0) := "0010000";
 CONSTANT sev_seg_dash: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0111111";
+CONSTANT sev_seg_off:  STD_LOGIC_VECTOR(6 DOWNTO 0) := "1111111";
 
 CONSTANT sev_seg_d: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0100001";
 CONSTANT sev_seg_e: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0000110";
-CONSTANT sev_seg_n: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0111010";
-CONSTANT sev_seg_i: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1011110";
+CONSTANT sev_seg_n: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0101011";
+CONSTANT sev_seg_i: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1111001";
 CONSTANT sev_seg_f: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0001110";
-CONSTANT sev_seg_u: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1010000";
-CONSTANT sev_seg_s: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0100100";
+CONSTANT sev_seg_u: STD_LOGIC_VECTOR(6 DOWNTO 0) := "1000001";
+CONSTANT sev_seg_s: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0010010";
+
+CONSTANT sev_seg_b: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0000011";
+CONSTANT sev_seg_o: STD_LOGIC_VECTOR(6 DOWNTO 0) := "0100011";
 
 CONSTANT defuse_code: INTEGER := 62;
 CONSTANT denied_code: INTEGER := 63;
+CONSTANT boon_code:   INTEGER := 64;
 
 SIGNAL display_0_buffer,
 		   display_1_buffer,
@@ -53,19 +58,26 @@ BEGIN
 	PROCESS(entrada)
 	BEGIN
 		IF entrada=defuse_code THEN
-			display_0_buffer <= sev_seg_d;
-			display_1_buffer <= sev_seg_e;
-			display_2_buffer <= sev_seg_f;
-			display_3_buffer <= sev_seg_u;
-			display_4_buffer <= sev_seg_s;
-			display_5_buffer <= sev_seg_e;
-		ELSIF entrada=denied_code THEN
-			display_0_buffer <= sev_seg_d;
-			display_1_buffer <= sev_seg_e;
-			display_2_buffer <= sev_seg_n;
-			display_3_buffer <= sev_seg_i;
-			display_4_buffer <= sev_seg_e;
 			display_5_buffer <= sev_seg_d;
+			display_4_buffer <= sev_seg_e;
+			display_3_buffer <= sev_seg_f;
+			display_2_buffer <= sev_seg_u;
+			display_1_buffer <= sev_seg_s;
+			display_0_buffer <= sev_seg_e;
+		ELSIF entrada=denied_code THEN
+			display_5_buffer <= sev_seg_d;
+			display_4_buffer <= sev_seg_e;
+			display_3_buffer <= sev_seg_n;
+			display_2_buffer <= sev_seg_i;
+			display_1_buffer <= sev_seg_e;
+			display_0_buffer <= sev_seg_d;
+		ELSIF entrada=boon_code THEN
+			display_5_buffer <= sev_seg_off;
+			display_4_buffer <= sev_seg_off;
+			display_3_buffer <= sev_seg_b;
+			display_2_buffer <= sev_seg_o;
+			display_1_buffer <= sev_seg_o;
+			display_0_buffer <= sev_seg_n;
 		ELSE
 			CASE (entrada mod 10) IS
 				WHEN 0 => display_0_buffer <= sev_seg_0;
