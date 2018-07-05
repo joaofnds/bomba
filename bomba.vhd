@@ -32,8 +32,7 @@ SIGNAL clock_segundos,
 		 clock_minutos,
 		 load_codigo,
 		 load_countdown,
-		 fsm_must_transition,
-		 contagem_ativa: STD_LOGIC;
+		 fsm_must_transition: STD_LOGIC;
 SIGNAL signal_generator_control: STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL display_mux_sel: STD_LOGIC_VECTOR(2 DOWNTO 0);
 SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -124,7 +123,6 @@ BEGIN
 				LEDR(15) <= '0';
 				LEDR(16) <= '0';
 				LEDR(17) <= '1';
-				contagem_ativa <= '0';
 				display_mux_sel <= "001";
 				load_codigo <= '1';
 				load_countdown <= '0';
@@ -139,7 +137,6 @@ BEGIN
 				LEDR(15) <= '0';
 				LEDR(16) <= '1';
 				LEDR(17) <= '0';
-				contagem_ativa <= '0';
 				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '1';
@@ -154,8 +151,6 @@ BEGIN
 				LEDR(15) <= '1';
 				LEDR(16) <= '0';
 				LEDR(17) <= '0';
-				next_state <= countdown;
-				contagem_ativa <= '1';
 				display_mux_sel <= "000";
 				load_codigo <= '0';
 				load_countdown <= '0';
