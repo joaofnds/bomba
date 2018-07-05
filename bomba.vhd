@@ -11,6 +11,7 @@ ENTITY bomba IS
 		SW: IN STD_LOGIC_VECTOR(17 DOWNTO 0);
 		KEY: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 		
+		LEDR: OUT STD_LOGIC_VECTOR(17 DOWNTO 0);
 		HEX0,
 		HEX1,
 		HEX2,
@@ -25,9 +26,14 @@ END bomba;
 
 ARCHITECTURE behavior OF bomba IS
 
+TYPE STATES is (set_code, set_timer, countdown);
+SIGNAL current_state, next_state: STATES;
 SIGNAL clock_segundos,
 		 clock_minutos,
 		 display_mux_sel,
+		 load_codigo,
+		 load_countdown,
+		 fsm_must_transition,
 		 contagem_ativa: STD_LOGIC;
 SIGNAL signal_generator_control: STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL segundos_buffer, minutos_buffer: STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -99,6 +105,64 @@ COMPONENT countdown_setter
 END COMPONENT;
 
 BEGIN
+	fsm_must_transition <= SW(0);
+	
+	PROCESS(CLOCK_50)
+	BEGIN
+		IF SW(1)='1' THEN
+			current_state <= set_code;
+		ELSIF rising_edge(CLOCK_50) THEN
+			current_state <= next_state;
+		END IF;
+	END PROCESS;
+	
+	PROCESS(current_state, fsm_must_transition)
+		VARIABLE initial_state: STD_LOGIC := '1';
+	BEGIN
+		CASE current_state IS
+			WHEN set_code =>
+				LEDR(15) <= '0';
+				LEDR(16) <= '0';
+				LEDR(17) <= '1';
+				contagem_ativa <= '0';
+				display_mux_sel <= '1';
+				load_codigo <= '1';
+				load_countdown <= '0';
+				signal_generator_control <= "00";
+				
+				IF fsm_must_transition='1' THEN
+					next_state <= set_timer;
+				ELSE
+					next_state <= set_code;
+				END IF;
+			WHEN set_timer =>
+				LEDR(15) <= '0';
+				LEDR(16) <= '1';
+				LEDR(17) <= '0';
+				contagem_ativa <= '0';
+				display_mux_sel <= '0';
+				load_codigo <= '0';
+				load_countdown <= '1';
+				signal_generator_control <= "00";
+				
+				IF fsm_must_transition='0' THEN
+					next_state <= countdown;
+				ELSE
+					next_state <= set_timer;
+				END IF;
+			WHEN countdown =>
+				LEDR(15) <= '1';
+				LEDR(16) <= '0';
+				LEDR(17) <= '0';
+				next_state <= countdown;
+				contagem_ativa <= '1';
+				display_mux_sel <= '0';
+				load_codigo <= '0';
+				load_countdown <= '0';
+				signal_generator_control <= "01";
+		END CASE;
+	END PROCESS;
+
 	gerador_de_sinal: signal_generator
 		PORT MAP (clock => CLOCK_50, controle => signal_generator_control, q => clock_segundos);
 		
@@ -108,7 +172,7 @@ BEGIN
 	segundos_counter: regressive_counter 
 		PORT MAP (
 			clock => clock_segundos,
-			load => SW(3) AND NOT contagem_ativa,
+			load => load_countdown,
 			preset => cd_seg,
 			reset => SW(2),
 			q => segundos_buffer
@@ -124,7 +188,7 @@ BEGIN
 	minutos_counter: regressive_counter 
 		PORT MAP (
 			clock => clock_minutos,
-			load => SW(3) AND NOT contagem_ativa,
+			load => load_countdown,
 			preset => cd_min,
 			reset => SW(2),
 			q => minutos_buffer
@@ -137,7 +201,7 @@ BEGIN
 	codigo_in <= to_integer(unsigned(SW(17 DOWNTO 14)));
 	
 	codigo_register: integer_register
-		PORT MAP (d => codigo_in, load => SW(4), q => codigo);
+		PORT MAP (d => codigo_in, load => load_codigo, q => codigo);
 	
 	dp_mux: display_mux
 		PORT MAP (
